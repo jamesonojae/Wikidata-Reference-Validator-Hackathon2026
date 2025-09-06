@@ -170,5 +170,24 @@ body {
 #backBtn .btn-glass:hover {
   box-shadow: 0 8px 20px rgba(238, 9, 121, 0.6);
 }
+/* Glass Navbar */
+.glass-navbar {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.glass-navbar .navbar-brand,
+.glass-navbar .nav-link {
+  color: #f1f1f1 !important;
+  transition: color 0.3s ease;
+}
+.glass-navbar .nav-link:hover {
+  color: #0dcaf0 !important; /* Bootstrap cyan */
+}
+body {
+  padding-top: 80px; /* adjust if navbar is taller */
+}
+
 
 

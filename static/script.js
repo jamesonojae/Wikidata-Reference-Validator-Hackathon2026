@@ -30,7 +30,7 @@ async function validate() {
   const qid = input.getAttribute("data-qid");
   const label = input.value;
   const resultDiv = document.getElementById("result");
-  const backBtn = document.getElementById("backBtn");
+  // const backBtn = document.getElementById("backBtn");
 
   if (!qid && !label) {
     resultDiv.innerHTML = `<div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Please type a label or select an item first.</div>`;
@@ -44,7 +44,7 @@ async function validate() {
       <p class="mt-2 text-light">Checking references...</p>
     </div>
   `;
-  backBtn.style.display = "none";
+  // backBtn.style.display = "none";
 
   try {
     const response = await fetch("/validate", {
@@ -56,12 +56,12 @@ async function validate() {
 
     if (data.error) {
       resultDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-x-circle"></i> ${data.error}</div>`;
-      backBtn.style.display = "block";
+      // backBtn.style.display = "block";
       return;
     }
     if (data.message) {
       resultDiv.innerHTML = `<div class="alert alert-info"><i class="bi bi-info-circle"></i> ${data.message}</div>`;
-      backBtn.style.display = "block";
+      // backBtn.style.display = "block";
       return;
     }
 
@@ -112,11 +112,11 @@ async function validate() {
 
     html += "</ul></div>";
     resultDiv.innerHTML = html;
-    backBtn.style.display = "block";
+    // backBtn.style.display = "block";
 
   } catch (err) {
     resultDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-bug"></i> Error: ${err}</div>`;
-    backBtn.style.display = "block";
+    // backBtn.style.display = "block";
   }
 }
 
@@ -125,6 +125,6 @@ function resetSearch() {
   document.getElementById("search").value = "";
   document.getElementById("search").removeAttribute("data-qid");
   document.getElementById("result").innerHTML = "";
-  document.getElementById("backBtn").style.display = "none";
+  // document.getElementById("backBtn").style.display = "none";
 }
 

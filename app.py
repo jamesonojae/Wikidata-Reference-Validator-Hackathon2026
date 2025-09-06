@@ -17,6 +17,11 @@ HEADERS = {
 def home():
     return render_template("index.html")
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
 
 async def check_url(session, url):
     """Check if a reference URL is alive or dead asynchronously with HEAD then GET fallback."""

@@ -53,6 +53,6 @@ pip install flask aiohttp requests
 
 4. Run the app
 python app.py
+```
 
-
-Then open: http://127.0.0.1:5000
+Open http://127.0.0.1:5000 in your browser.

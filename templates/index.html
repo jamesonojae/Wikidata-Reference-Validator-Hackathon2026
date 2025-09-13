@@ -33,6 +33,15 @@
     </div>
   </nav>
 
+<div class="floating-icons">
+  <i class="bi bi-link-45deg"></i>
+  <i class="bi bi-book"></i>
+   <i class="bi bi-link-45deg"></i>
+  <i class="bi bi-check2-circle"></i>
+   <i class="bi bi-link-45deg"></i>
+  <i class="bi bi-shield-lock"></i> <!-- added new icon -->
+</div>
+
   <div class="container app-container">
     <div class="text-center mb-4">
       <h1 class="fw-bold app-title">
@@ -42,18 +51,20 @@
     </div>
 
     <!-- Search Section -->
-    <div class="card glass-card p-4 mb-4">
-      <div class="mb-3 position-relative">
-        <input type="text" id="search" class="form-control form-control-lg"
-               placeholder="Search for a Wikidata item (e.g., Albert Einstein)">
-        <ul id="suggestions" class="list-group"></ul>
-      </div>
-      <div class="text-center">
-        <button class="btn btn-lg btn-glass shadow" onclick="validate()">
-          <i class="bi bi-shield-check"></i> Validate References
-        </button>
-      </div>
-    </div>
+   <!-- Search Section -->
+<div id="searchSection" class="card glass-card p-4 mb-4">
+  <div class="mb-3 position-relative">
+    <input type="text" id="search" class="form-control form-control-lg"
+           placeholder="Search for a Wikidata item (e.g., Albert Einstein)">
+    <ul id="suggestions" class="list-group"></ul>
+  </div>
+  <div class="text-center">
+    <button class="btn btn-lg btn-glass shadow" onclick="validate()">
+      <i class="bi bi-shield-check"></i> Validate References
+    </button>
+  </div>
+</div>
+
 
     <!-- Results -->
     <div id="result"></div>

@@ -10,9 +10,9 @@ body {
   align-items: center;
   justify-content: center;
   color: #fff;
+  padding-top: 80px; /* account for navbar */
 }
 
-/* Smooth gradient animation */
 @keyframes gradientBG {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -26,7 +26,7 @@ body {
   padding: 1rem;
 }
 
-/* === Title styling === */
+/* === Title === */
 .app-title {
   color: #ffffff;
   text-align: center;
@@ -36,13 +36,12 @@ body {
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
   animation: fadeIn 1.5s ease-in-out;
 }
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* === Glassmorphism card === */
+/* === Glass card === */
 .glass-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(14px);
@@ -55,12 +54,11 @@ body {
   transform: translateY(20px);
   opacity: 0;
 }
-
 @keyframes slideUp {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* === Suggestion dropdown === */
+/* === Suggestions dropdown === */
 #suggestions {
   position: absolute;
   z-index: 1000;
@@ -72,19 +70,17 @@ body {
   box-shadow: 0 6px 15px rgba(0,0,0,0.25);
   margin-top: 5px;
 }
-
 #suggestions li {
   cursor: pointer;
   padding: 10px 15px;
   transition: background 0.2s ease, transform 0.15s ease;
 }
-
 #suggestions li:hover {
   background: #e9f2ff;
   transform: translateX(4px);
 }
 
-/* === Button with glowing hover === */
+/* === Buttons === */
 .btn-glass {
   background: linear-gradient(45deg, #4facfe, #00f2fe);
   color: white;
@@ -97,80 +93,52 @@ body {
   transition: all 0.3s ease-in-out;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
 }
-
 .btn-glass:hover {
   transform: translateY(-4px) scale(1.05);
   box-shadow: 0 12px 25px rgba(79, 172, 254, 0.7);
 }
 
-/* === Results section === */
-#result .card {
-  background: rgba(120, 184, 118, 0.98);
-  border-radius: 1rem;
-  color: #222;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  padding: 1.5rem;
-  margin-top: 1.5rem;
-  animation: fadeIn 0.8s ease;
+/* Action Button - Cyan */
+.btn-glass-action {
+  background: linear-gradient(135deg, #0dcaf0, #0aa2c0);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 14px;
+  box-shadow: 0 4px 10px rgba(13, 202, 240, 0.4);
+  transition: all 0.3s ease;
+}
+.btn-glass-action:hover {
+  background: linear-gradient(135deg, #0aa2c0, #0dcaf0);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 15px rgba(13, 202, 240, 0.6);
 }
 
-#result ul {
-  max-height: 400px;
-  overflow-y: auto;
-  padding: 0;
+/* Warning Button - Amber */
+.btn-glass-warning {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 14px;
+  box-shadow: 0 4px 10px rgba(255, 193, 7, 0.4);
+  transition: all 0.3s ease;
+}
+.btn-glass-warning:hover {
+  background: linear-gradient(135deg, #e0a800, #ffc107);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 15px rgba(255, 193, 7, 0.6);
 }
 
-/* === Result list items === */
-#result li {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  margin-bottom: 0.6rem;
-  padding: 10px 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-#result li:hover {
-  background: #eef6ff;
-  transform: scale(1.02);
-}
-
-/* === Links in results === */
-.ref-link {
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  color: #0056b3;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-@media (min-width: 768px) {
-  .ref-link {
-    max-width: 600px;
-  }
-}
-
-
-.ref-link:hover {
-  text-decoration: underline;
-  color: #003f88;
-}
-
-/* Back button uses same glowing style as validate button */
+/* Back button */
 #backBtn .btn-glass {
   background: linear-gradient(45deg, #ff6a00, #ee0979);
 }
-
 #backBtn .btn-glass:hover {
   box-shadow: 0 8px 20px rgba(238, 9, 121, 0.6);
 }
-/* Glass Navbar */
+
+/* Navbar */
 .glass-navbar {
   background: rgba(255, 255, 255, 0.1) !important;
   backdrop-filter: blur(12px);
@@ -183,11 +151,140 @@ body {
   transition: color 0.3s ease;
 }
 .glass-navbar .nav-link:hover {
-  color: #0dcaf0 !important; /* Bootstrap cyan */
-}
-body {
-  padding-top: 80px; /* adjust if navbar is taller */
+  color: #0dcaf0 !important;
 }
 
+/* === Loader === */
+.fancy-loader {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.2);
+  border-top: 6px solid #0dcaf0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 15px #0dcaf0;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
+/* === Results section === */
+#result .card {
+  background: rgba(120, 184, 118, 0.98);
+  border-radius: 1rem;
+  color: #222;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  animation: fadeIn 0.8s ease;
+}
+#result ul {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* === List items === */
+.list-group-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: #cae0f6;
+  border:  1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 0.6rem;
+}
+
+/* Top row: link + badge + button aligned */
+.ref-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 🔑 Fixed-length links */
+.ref-link {
+  display: inline-block;
+  width: 400px;  /* fixed width for alignment */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #0056b3;
+  text-decoration: none;
+  font-weight: 500;
+}
+.ref-link:hover {
+  color: #003f88;
+  text-decoration: underline;
+}
+
+/* Badge stays snug */
+.ref-badge {
+  flex-shrink: 0;
+}
+
+/* Collapse details */
+.statement-box {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+ 
+/* Annimation */
+
+.floating-icons i {
+  position: absolute;
+  color: rgba(244, 239, 239, 0.91);
+  animation: floatIcon linear infinite;
+  z-index: -1; /* stay behind content */
+}
+
+/* Different sizes, speeds, and starting positions */
+.floating-icons i:nth-child(1) {
+  left: 20%;
+  font-size: 3rem;
+  animation-duration: 24s;
+  animation-delay: 0s;
+}
+.floating-icons i:nth-child(2) {
+  left: 30%;
+  font-size: 4.2rem;
+  animation-duration: 28s;
+  animation-delay: 5s;
+}
+.floating-icons i:nth-child(3) {
+  left: 55%;
+  font-size: 3.5rem;
+  animation-duration: 22s;
+  animation-delay: 2s;
+}
+.floating-icons i:nth-child(4) {
+  left: 75%;
+  font-size: 5rem;
+  animation-duration: 30s;
+  animation-delay: 8s;
+}
+.floating-icons i:nth-child(5) {
+  left: 90%;
+  font-size: 3.8rem;
+  animation-duration: 26s;
+  animation-delay: 3s;
+}
+
+@keyframes floatIcon {
+  from { 
+    transform: translateY(110vh) rotate(0deg); 
+    opacity: 0; 
+  }
+  20% { opacity: 0.6; }
+  50% { opacity: 0.4; }
+  to { 
+    transform: translateY(-130vh) rotate(360deg); 
+    opacity: 0; 
+  }
+}
 

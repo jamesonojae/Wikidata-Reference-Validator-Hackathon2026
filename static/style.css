@@ -235,6 +235,11 @@ body {
 }
  
 /* Annimation */
+.floating-icons i:nth-child(6) {
+  left: 5%;   /* position horizontally */
+  font-size: 2.8rem; /* make the search icon bigger */
+  animation-duration: 26s;
+}
 
 .floating-icons i {
   position: absolute;

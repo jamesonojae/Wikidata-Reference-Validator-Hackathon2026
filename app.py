@@ -20,22 +20,45 @@ def home():
 @app.route("/about")
 def about():
     return render_template("about.html")
-    
-    
+
 @app.route("/report")
 def report():
     return render_template("report.html")
+
+@app.route("/search")
+def search():
+    query = request.args.get("q")
+    if not query:
+        return jsonify([])
+
+    params = {
+        "action": "wbsearchentities",
+        "search": query,
+        "language": "en",
+        "format": "json"
+    }
+    r = requests.get(WIKIDATA_API, params=params)
+    data = r.json()
+
+    results = []
+    for item in data.get("search", []):
+        results.append({
+            "id": item.get("id"),
+            "label": item.get("label"),
+            "description": item.get("description", "")
+        })
+
+    return jsonify(results)
 
 
 async def check_url(session, url):
     """Check if a reference URL is alive or dead asynchronously with HEAD then GET fallback."""
     try:
         async with session.head(url, allow_redirects=True, timeout=5) as resp:
-            # Treat 2xx, 3xx, 401, 403 as alive
             if resp.status < 400 or resp.status in (401, 403):
                 return {"url": url, "status": "alive"}
     except Exception:
-        pass  # HEAD failed, try GET
+        pass
 
     try:
         async with session.get(url, allow_redirects=True, timeout=10) as resp:
@@ -48,29 +71,32 @@ async def check_url(session, url):
 
 
 def fetch_labels(ids):
-    """
-    Given a list of Wikidata IDs (e.g., P19, Q149573),
-    fetch their English labels from Wikidata.
-    Returns a dict {id: label}.
-    """
-    if not ids:
-        return {}
-
-    params = {
-        "action": "wbgetentities",
-        "ids": "|".join(ids),
-        "format": "json",
-        "props": "labels",
-        "languages": "en"
-    }
-    r = requests.get(WIKIDATA_API, params=params, headers=HEADERS, timeout=10)
-    r.raise_for_status()
-    entities = r.json().get("entities", {})
-
+    """Fetch English labels for a set of Wikidata IDs in batches."""
     labels = {}
-    for eid, data in entities.items():
-        label = data.get("labels", {}).get("en", {}).get("value", eid)
-        labels[eid] = label
+    if not ids:
+        return labels
+
+    id_list = list(ids)
+    chunks = [id_list[i:i + 50] for i in range(0, len(id_list), 50)]
+
+    for chunk in chunks:
+        params = {
+            "action": "wbgetentities",
+            "ids": "|".join(chunk),
+            "format": "json",
+            "props": "labels",
+            "languages": "en"
+        }
+        try:
+            r = requests.get(WIKIDATA_API, params=params, headers=HEADERS, timeout=10)
+            r.raise_for_status()
+            entities = r.json().get("entities", {})
+            for eid, data in entities.items():
+                label = data.get("labels", {}).get("en", {}).get("value")
+                if label:
+                    labels[eid] = label
+        except Exception as e:
+            print(f"Label fetch failed for chunk {chunk}: {e}")
     return labels
 
 
@@ -83,7 +109,6 @@ def validate_references():
     qid = data["qid"].strip()
 
     try:
-        # Fetch entity data from Wikidata API
         params = {
             "action": "wbgetentities",
             "ids": qid,
@@ -94,14 +119,15 @@ def validate_references():
         entity = r.json()["entities"].get(qid, {})
         claims = entity.get("claims", {})
 
-        refs_data = []  # To hold refs with URL + prop + value
-        all_ids_to_label = set()  # collect all property and statement QIDs for labels
+        refs_data = []
+        all_ids_to_label = set()
 
         for prop, statements in claims.items():
             for stmt in statements:
                 statement_value = None
                 mainsnak = stmt.get("mainsnak", {})
                 datavalue = mainsnak.get("datavalue", {}).get("value")
+
                 if isinstance(datavalue, dict) and "id" in datavalue:
                     statement_value = datavalue["id"]
 
@@ -123,24 +149,20 @@ def validate_references():
                                     "statementValue": statement_value
                                 })
                                 all_ids_to_label.add(prop)
-                                if statement_value:
+                                if statement_value and statement_value.startswith("Q"):
                                     all_ids_to_label.add(statement_value)
 
         if not refs_data:
             return jsonify({"message": "No references found"}), 200
 
-        # Run async URL checks in parallel
         async def run_checks():
             async with aiohttp.ClientSession(headers=HEADERS) as session:
                 tasks = [check_url(session, ref["url"]) for ref in refs_data]
                 return await asyncio.gather(*tasks)
 
         url_statuses = asyncio.run(run_checks())
-
-        # Fetch labels for all property and statement IDs
         labels = fetch_labels(all_ids_to_label)
 
-        # Combine results, add labels and status
         results = []
         for ref_data, status_data in zip(refs_data, url_statuses):
             results.append({

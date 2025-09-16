@@ -179,6 +179,15 @@ body {
   margin-top: 1.5rem;
   animation: fadeIn 0.8s ease;
 }
+#result .card h3 {
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  max-width: 100%;
+}
+
 #result ul {
   max-height: 400px;
   overflow-y: auto;

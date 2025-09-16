@@ -10,26 +10,59 @@ document.getElementById("search").addEventListener("input", async function() {
     `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(query)}&language=en&format=json&origin=*`
   );
   const data = await response.json();
+console.log("Validation response:", data);
 
   data.search.forEach(item => {
     const li = document.createElement("li");
     li.className = "list-group-item list-group-item-action";
-    li.textContent = `${item.label} (${item.id})`;
+
+    // ✅ show label + description (like Wikidata search)
+    li.innerHTML = `
+      <div>
+        <strong>${item.label}</strong>
+        <div class="small text-muted">${item.description || ""}</div>
+      </div>
+    `;
+
     li.onclick = () => {
       document.getElementById("search").value = item.label;
       document.getElementById("search").setAttribute("data-qid", item.id);
+      document.getElementById("search").setAttribute("data-label", item.label); // ✅ store label
       suggestions.innerHTML = "";
     };
+
     suggestions.appendChild(li);
   });
 });
+
+// Cache property labels to avoid repeated API calls
+const propertyLabelCache = {};
+
+async function getPropertyLabel(pid) {
+  if (!pid) return "";
+  if (propertyLabelCache[pid]) return propertyLabelCache[pid];
+
+  try {
+    const response = await fetch(
+      `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${pid}&format=json&languages=en&origin=*`
+    );
+    const data = await response.json();
+    const label = data.entities[pid]?.labels?.en?.value || "";
+    console.log('label', label);
+    
+    propertyLabelCache[pid] = label;
+    return label;
+  } catch {
+    return "";
+  }
+}
 
 // Validate references
 // Validate references
 async function validate() {
   const input = document.getElementById("search");
   const qid = input.getAttribute("data-qid");
-  const label = input.value;
+  const label = input.getAttribute("data-label") || input.value;  // ✅ prefer stored label
   const resultDiv = document.getElementById("result");
   const searchSection = document.getElementById("searchSection"); 
 
@@ -41,11 +74,10 @@ async function validate() {
     return;
   }
 
-  // Hide search after clicking validate
-  searchSection.style.display = "none";
+  searchSection.style.display = "none"; // hide search
 
-  // Start timer
-  let estimate = 30; // optimistic guess (30s)
+  // Loader UI
+  let estimate = 30;
   let remaining = estimate;
   resultDiv.innerHTML = `
     <div class="d-flex flex-column align-items-center justify-content-center my-5">
@@ -76,13 +108,10 @@ async function validate() {
     });
     const data = await response.json();
 
-    // Stop countdown when backend finishes
     clearInterval(countdownInterval);
-
-    // Calculate actual duration
     const duration = Math.floor((Date.now() - start) / 1000);
 
-    // Handle error
+    // Error
     if (data.error) {
       resultDiv.innerHTML = `
         <div class="card p-4 text-center">
@@ -95,7 +124,7 @@ async function validate() {
       return;
     }
 
-    // Handle "no references found"
+    // No refs
     if (data.message) {
       resultDiv.innerHTML = `
         <div class="card p-4 text-center">
@@ -108,19 +137,20 @@ async function validate() {
       return;
     }
 
-    // Count alive/dead
+    // Alive/dead counts
     const aliveCount = data.filter(r => r.status === "alive").length;
     const deadCount = data.filter(r => r.status === "dead").length;
 
-    // Save results for report.html
     localStorage.setItem("reportData", JSON.stringify({
       qid: qid || label,
+      label,
       aliveCount,
       deadCount,
       references: data,
       duration
     }));
 
+    // Build result HTML
     let html = `
       <div class="card p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -131,7 +161,7 @@ async function validate() {
             </a>
           </div>
           <h3 class="mb-0 text-light">
-            <i class="bi bi-list-check"></i> Results for ${qid || label}
+             <i class="bi bi-list-check"></i> Results for ${label} (${qid})
           </h3>
         </div>
         <p>
@@ -141,12 +171,18 @@ async function validate() {
         <ul class="list-group mt-3">
     `;
 
-    data.forEach((ref, index) => {
+    for (let i = 0; i < data.length; i++) {
+      const ref = data[i];
       const badge = ref.status === "alive" ? "success" : "danger";
       const icon = ref.status === "alive" ? "check-circle" : "x-octagon";
-      const collapseId = `collapseRef${index}`;
-      const btnId = `toggleBtn${index}`;
-
+      const collapseId = `collapseRef${i}`;
+      const btnId = `toggleBtn${i}`;
+      // console.log('reffffffff', ref);
+      
+      // ✅ Always fetch property label instead of showing Pid
+      const propertyLabel = ref.propertyLabel;
+      // console.log('propertyLabel', propertyLabel);
+      
       html += `
         <li class="list-group-item p-3 rounded shadow-sm mb-2">
           <div class="d-flex justify-content-between align-items-center gap-2">
@@ -162,27 +198,24 @@ async function validate() {
                       data-bs-toggle="collapse"
                       data-bs-target="#${collapseId}"
                       aria-expanded="false"
-                      aria-controls="${collapseId}">
-                Details
-              </button>
+                      aria-controls="${collapseId}">Details</button>
             </div>
           </div>
 
           <div class="collapse mt-2" id="${collapseId}">
             <div class="p-2 border rounded bg-light">
               <div class="fw-bold">Statement:</div>
-              <div>
-                <strong>${ref.propertyLabel}</strong>
+             <div>
+                <strong>${propertyLabel}</strong>
                 ${ref.statementValue ? `: <em>${ref.statementValue}</em>` : ""}
               </div>
               ${
                 ref.status === "dead"
-                  ? `
-              <div class="mt-2 alert alert-warning p-2">
-                <i class="bi bi-exclamation-triangle me-1"></i>
-                <span class="fw-semibold">Suggestion:</span>
-                Please review or edit this statement reference.
-              </div>`
+                  ? `<div class="mt-2 alert alert-warning p-2">
+                       <i class="bi bi-exclamation-triangle me-1"></i>
+                       <span class="fw-semibold">Suggestion:</span>
+                       Please review or edit this statement reference.
+                     </div>`
                   : ""
               }
             </div>
@@ -202,7 +235,7 @@ async function validate() {
           });
         </script>
       `;
-    });
+    }
 
     html += `
         </ul>
@@ -215,7 +248,7 @@ async function validate() {
 
     resultDiv.innerHTML = html;
 
-    // Attach event after HTML is injected
+    // Open report
     document.getElementById("viewReportBtn").onclick = () => {
       window.open("/report", "_blank");
     };
@@ -233,12 +266,12 @@ async function validate() {
 }
 
 
-
 // Reset to search again
 function resetSearch() {
   const searchSection = document.getElementById("searchSection");
   document.getElementById("search").value = "";
   document.getElementById("search").removeAttribute("data-qid");
+  document.getElementById("search").removeAttribute("data-label"); // ✅ clear stored label
   document.getElementById("result").innerHTML = "";
 
   // Show search again

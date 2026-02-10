@@ -6,6 +6,8 @@ import asyncio
 app = Flask(__name__)
 
 WIKIDATA_API = "https://www.wikidata.org/w/api.php"
+WAYBACK_API = "https://archive.org/wayback/available"
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                   "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -13,17 +15,24 @@ HEADERS = {
 }
 
 
+# ---------------------------------------------------
+# ROUTES
+# ---------------------------------------------------
+
 @app.route("/")
 def home():
     return render_template("index.html")
+
 
 @app.route("/about")
 def about():
     return render_template("about.html")
 
+
 @app.route("/report")
 def report():
     return render_template("report.html")
+
 
 @app.route("/search")
 def search():
@@ -37,6 +46,7 @@ def search():
         "language": "en",
         "format": "json"
     }
+
     r = requests.get(WIKIDATA_API, params=params)
     data = r.json()
 
@@ -51,8 +61,11 @@ def search():
     return jsonify(results)
 
 
+# ---------------------------------------------------
+# URL STATUS CHECK
+# ---------------------------------------------------
+
 async def check_url(session, url):
-    """Check if a reference URL is alive or dead asynchronously with HEAD then GET fallback."""
     try:
         async with session.head(url, allow_redirects=True, timeout=5) as resp:
             if resp.status < 400 or resp.status in (401, 403):
@@ -64,14 +77,46 @@ async def check_url(session, url):
         async with session.get(url, allow_redirects=True, timeout=10) as resp:
             if resp.status < 400 or resp.status in (401, 403):
                 return {"url": url, "status": "alive"}
-            else:
-                return {"url": url, "status": "dead"}
+            return {"url": url, "status": "dead"}
     except Exception:
         return {"url": url, "status": "dead"}
 
 
+# ---------------------------------------------------
+# WAYBACK MACHINE HELPER  ✅ FIXED
+# ---------------------------------------------------
+
+def fetch_wayback_snapshot(url):
+    """
+    Fetch latest available Wayback Machine snapshot for a URL.
+    Returns None if no archive exists.
+    """
+    try:
+        params = {"url": url}
+        r = requests.get(WAYBACK_API, params=params, timeout=10)
+        r.raise_for_status()
+
+        data = r.json()
+        snapshot = data.get("archived_snapshots", {}).get("closest")
+
+        if snapshot and snapshot.get("available"):
+            return {
+                "archiveUrl": snapshot.get("url"),
+                "timestamp": snapshot.get("timestamp"),
+                "status": snapshot.get("status")
+            }
+
+    except Exception as e:
+        print(f"[Wayback] Failed for {url}: {e}")
+
+    return None
+
+
+# ---------------------------------------------------
+# LABEL FETCHING
+# ---------------------------------------------------
+
 def fetch_labels(ids):
-    """Fetch English labels for a set of Wikidata IDs in batches."""
     labels = {}
     if not ids:
         return labels
@@ -87,18 +132,26 @@ def fetch_labels(ids):
             "props": "labels",
             "languages": "en"
         }
+
         try:
             r = requests.get(WIKIDATA_API, params=params, headers=HEADERS, timeout=10)
             r.raise_for_status()
             entities = r.json().get("entities", {})
+
             for eid, data in entities.items():
                 label = data.get("labels", {}).get("en", {}).get("value")
                 if label:
                     labels[eid] = label
+
         except Exception as e:
-            print(f"Label fetch failed for chunk {chunk}: {e}")
+            print(f"[Label fetch failed] {chunk}: {e}")
+
     return labels
 
+
+# ---------------------------------------------------
+# VALIDATE REFERENCES  ✅ CORRECT ROUTE
+# ---------------------------------------------------
 
 @app.route("/validate", methods=["POST"])
 def validate_references():
@@ -114,8 +167,10 @@ def validate_references():
             "ids": qid,
             "format": "json"
         }
+
         r = requests.get(WIKIDATA_API, params=params, headers=HEADERS, timeout=15)
         r.raise_for_status()
+
         entity = r.json()["entities"].get(qid, {})
         claims = entity.get("claims", {})
 
@@ -134,13 +189,13 @@ def validate_references():
                 for ref in stmt.get("references", []):
                     for snaks in ref.get("snaks", {}).values():
                         for snak in snaks:
-                            datavalue = snak.get("datavalue", {}).get("value")
+                            dv = snak.get("datavalue", {}).get("value")
                             ref_url = None
 
-                            if isinstance(datavalue, dict) and "uri" in datavalue:
-                                ref_url = datavalue["uri"]
-                            elif isinstance(datavalue, str) and datavalue.startswith("http"):
-                                ref_url = datavalue
+                            if isinstance(dv, dict) and "uri" in dv:
+                                ref_url = dv["uri"]
+                            elif isinstance(dv, str) and dv.startswith("http"):
+                                ref_url = dv
 
                             if ref_url:
                                 refs_data.append({
@@ -165,18 +220,31 @@ def validate_references():
 
         results = []
         for ref_data, status_data in zip(refs_data, url_statuses):
-            results.append({
+            result = {
                 "url": ref_data["url"],
                 "status": status_data["status"],
                 "propertyLabel": labels.get(ref_data["property"], ref_data["property"]),
-                "statementValue": labels.get(ref_data["statementValue"], ref_data["statementValue"]) if ref_data["statementValue"] else ""
-            })
+                "statementValue": labels.get(
+                    ref_data["statementValue"],
+                    ref_data["statementValue"]
+                ) if ref_data["statementValue"] else ""
+            }
+
+            # 🔁 Wayback suggestion ONLY for dead refs
+            if status_data["status"] == "dead":
+                archive = fetch_wayback_snapshot(ref_data["url"])
+                if archive:
+                    result["suggestedArchive"] = archive
+
+            results.append(result)
 
         return jsonify(results)
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+# ---------------------------------------------------
 
 if __name__ == "__main__":
     app.run(debug=True)

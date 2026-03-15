@@ -18,7 +18,6 @@ HEADERS = {
 # ---------------------------------------------------
 # ROUTES
 # ---------------------------------------------------
-
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -27,6 +26,10 @@ def home():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+@app.route("/use")
+def use():
+    return render_template("use.html")
 
 
 @app.route("/report")

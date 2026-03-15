@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How to Use - Wikidata Reference Validator</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg glass-navbar shadow-sm fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
+      <i class="bi bi-search-heart"></i> Wikidata Validator
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('home') }}">🏠 Home</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('about') }}">ℹ️ About</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{{ url_for('use') }}">
+            📖 How to Use
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!-- Page Content -->
+<div class="container app-container mt-5">
+
+  <div class="card glass-card p-4">
+
+    <h2 class="text-light mb-3">
+      <i class="bi bi-tools"></i> How to Use the Tool
+    </h2>
+
+    <p class="text-light">
+      The <strong>Wikidata Reference Validator</strong> helps editors quickly check whether
+      external references used in Wikidata statements are still accessible or have become dead links.
+      This helps maintain the reliability and verifiability of Wikidata.
+    </p>
+
+
+    <p class="text-light mt-3 mb-2">Steps to use the tool:</p>
+
+    <ol class="text-light">
+
+      <li class="mb-2">
+        Start typing the name or ID of a <strong>Wikidata item</strong> in the search box on the homepage.
+        The tool provides autocomplete suggestions directly from Wikidata.
+      </li>
+
+      <li class="mb-2">
+        Select the correct item from the suggestions and click
+        <strong>Validate References</strong>.
+      </li>
+
+      <li class="mb-2">
+        The tool will retrieve all statements with references for that item
+        and check whether the reference links are accessible.
+      </li>
+
+      <li class="mb-2">
+        Results will display the reference links with their status:
+        <ul>
+          <li>✅ <strong>Alive</strong> — the link is still accessible.</li>
+          <li>❌ <strong>Dead</strong> — the link is no longer reachable.</li>
+        </ul>
+      </li>
+
+      <li class="mb-2">
+        When a link is marked as <strong>dead</strong>, you can click on the
+        <strong>Details</strong> button to inspect the reference and navigate to Wikidata
+        to update or replace it.
+      </li>
+
+      <li class="mb-2">
+        When available, the tool may suggest an
+        <strong>archived version</strong> of the reference (for example from
+        Internet Archive) which can be used to replace the dead link.
+      </li>
+
+    </ol>
+
+
+    <hr class="border-light">
+
+
+    <p class="text-light">
+      💡 Tip: When updating references on Wikidata, consider adding an
+      <strong>archive URL</strong> and <strong>archive date</strong> so the reference
+      remains verifiable even if the original page disappears.
+    </p>
+
+
+  </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

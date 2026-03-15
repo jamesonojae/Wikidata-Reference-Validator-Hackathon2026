@@ -1,7 +1,7 @@
 /* === Background with animated gradient === */
 body {
   margin: 0;
-  height: 100vh;
+  min-height: 100vh;
   background: linear-gradient(135deg, #1e3c72, #2a5298, #1e3c72);
   background-size: 600% 600%;
   animation: gradientBG 18s ease infinite;

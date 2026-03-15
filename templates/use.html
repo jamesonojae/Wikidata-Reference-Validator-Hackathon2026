@@ -3,122 +3,145 @@
 <head>
   <meta charset="UTF-8">
   <title>How to Use - Wikidata Reference Validator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
 
+  <style>
+    .guide-image {
+      width: 100%;
+      max-width: 850px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      border-radius: 12px;
+    }
+
+    .howto-section p,
+    .howto-section li,
+    .howto-section h2,
+    .howto-section h4 {
+      word-wrap: break-word;
+    }
+  </style>
+</head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg glass-navbar shadow-sm fixed-top">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
-      <i class="bi bi-search-heart"></i> Wikidata Validator
-    </a>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg glass-navbar shadow-sm fixed-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
+        <i class="bi bi-search-heart"></i> Wikidata Validator
+      </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav">
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('home') }}">🏠 Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('about') }}">ℹ️ About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{{ url_for('use') }}">📖 How to Use</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('home') }}">🏠 Home</a>
+  <!-- Page Content -->
+  <div class="container app-container mt-5 pt-4">
+    <div class="card glass-card p-4 howto-section">
+
+      <h2 class="text-light mb-3">
+        <i class="bi bi-tools"></i> How to Use the Tool
+      </h2>
+
+      <p class="text-light">
+        The <strong>Wikidata Reference Validator</strong> helps you check whether
+        external references used in Wikidata statements are still accessible or
+        have become dead links. This makes it easier to review and maintain
+        reliable references on Wikidata.
+      </p>
+
+      <p class="text-light mt-4 mb-2">🛠️ Steps to use the tool:</p>
+
+      <ol class="text-light">
+        <li class="mb-2">
+          Start typing the name or ID of a <strong>Wikidata item</strong> in the search box
+          on the homepage. The tool provides autocomplete suggestions directly from Wikidata.
         </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('about') }}">ℹ️ About</a>
+        <li class="mb-2">
+          Select the correct item from the suggestions and click
+          <strong>Validate References</strong>.
         </li>
-
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{{ url_for('use') }}">
-            📖 How to Use
-          </a>
+        <li class="mb-2">
+          The tool will check the external references attached to statements of that item.
         </li>
+        <li class="mb-2">
+          Results will show the reference links and indicate whether they are:
+          <ul class="mt-2">
+            <li>✅ <strong>Alive</strong> – the reference link is still accessible.</li>
+            <li>❌ <strong>Dead</strong> – the reference link is no longer accessible.</li>
+          </ul>
+        </li>
+        <li class="mb-2">
+          If a reference is marked as <strong>dead</strong>, click on the
+          <strong>Details</strong> button to expand more information about that reference.
+        </li>
+        <li class="mb-2">
+          You can then review the statement on Wikidata and update the dead reference
+          with a corrected or more reliable source.
+        </li>
+        <li class="mb-2">
+          When available, the tool may also suggest an
+          <strong>archived version</strong> of the reference, such as a Wayback Machine snapshot,
+          which can be used to replace or supplement the dead link.
+        </li>
+      </ol>
 
-      </ul>
+      <hr class="border-light">
+
+      <h4 class="text-light mt-4 mb-3">
+        <i class="bi bi-image"></i> Example of a Dead Reference
+      </h4>
+
+      <p class="text-light">
+        Below is an example of how the tool displays a dead reference. The validator marks the link
+        as <strong>dead</strong>, shows the related statement, and provides a suggested archived version
+        when available.
+      </p>
+
+      <div class="text-center my-4">
+        <img
+          src="{{ url_for('static', filename='dead-reference-example.jpg') }}"
+          class="img-fluid shadow guide-image"
+          alt="Example of a dead reference result in the Wikidata Reference Validator"
+        >
+      </div>
+
+      <p class="text-light text-center">
+        Example result showing a dead reference and a suggested archived version.
+      </p>
+
+      <hr class="border-light">
+
+      <p class="text-light mb-0">
+        💡 <strong>Tip:</strong> When updating a dead reference on Wikidata, it is helpful
+        to add an <strong>archive URL</strong> and <strong>archive date</strong> so the
+        source remains verifiable even if the original page becomes unavailable.
+      </p>
+
     </div>
   </div>
-</nav>
 
-
-<!-- Page Content -->
-<div class="container app-container mt-5">
-
-  <div class="card glass-card p-4">
-
-    <h2 class="text-light mb-3">
-      <i class="bi bi-tools"></i> How to Use the Tool
-    </h2>
-
-    <p class="text-light">
-      The <strong>Wikidata Reference Validator</strong> helps editors quickly check whether
-      external references used in Wikidata statements are still accessible or have become dead links.
-      This helps maintain the reliability and verifiability of Wikidata.
-    </p>
-
-
-    <p class="text-light mt-3 mb-2">Steps to use the tool:</p>
-
-    <ol class="text-light">
-
-      <li class="mb-2">
-        Start typing the name or ID of a <strong>Wikidata item</strong> in the search box on the homepage.
-        The tool provides autocomplete suggestions directly from Wikidata.
-      </li>
-
-      <li class="mb-2">
-        Select the correct item from the suggestions and click
-        <strong>Validate References</strong>.
-      </li>
-
-      <li class="mb-2">
-        The tool will retrieve all statements with references for that item
-        and check whether the reference links are accessible.
-      </li>
-
-      <li class="mb-2">
-        Results will display the reference links with their status:
-        <ul>
-          <li>✅ <strong>Alive</strong> — the link is still accessible.</li>
-          <li>❌ <strong>Dead</strong> — the link is no longer reachable.</li>
-        </ul>
-      </li>
-
-      <li class="mb-2">
-        When a link is marked as <strong>dead</strong>, you can click on the
-        <strong>Details</strong> button to inspect the reference and navigate to Wikidata
-        to update or replace it.
-      </li>
-
-      <li class="mb-2">
-        When available, the tool may suggest an
-        <strong>archived version</strong> of the reference (for example from
-        Internet Archive) which can be used to replace the dead link.
-      </li>
-
-    </ol>
-
-
-    <hr class="border-light">
-
-
-    <p class="text-light">
-      💡 Tip: When updating references on Wikidata, consider adding an
-      <strong>archive URL</strong> and <strong>archive date</strong> so the reference
-      remains verifiable even if the original page disappears.
-    </p>
-
-
-  </div>
-
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

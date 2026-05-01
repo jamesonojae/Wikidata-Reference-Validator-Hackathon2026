@@ -86,7 +86,7 @@ async function validate() {
   resultDiv.innerHTML = `
     <div class="d-flex flex-column align-items-center justify-content-center my-5">
       <div class="fancy-loader"></div>
-      <p class="mt-3 text-light fw-bold">Checking references...</p>
+      <p class="mt-3 text-light fw-bold">...</p>
       <p id="countdownTimer" class="text-info small">
         Estimated time: ${remaining}s
       </p>

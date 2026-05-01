@@ -73,7 +73,7 @@ Open your browser and go to:
 We are using Phabricator to manage all hackathon tasks.
 
 👉 Browse and pick a task here:
-https://phabricator.wikimedia.org/tag/wikidata-reference-validator/
+https://phabricator.wikimedia.org/project/board/8311/
 
 ### 🪜 How to participate
 

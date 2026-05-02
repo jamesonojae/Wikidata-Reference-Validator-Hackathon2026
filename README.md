@@ -25,12 +25,22 @@ Coming soon — for now, run locally 👇
 * Python 3.10+
 * Flask (Backend)
 * Aiohttp + Asyncio (for fast URL checking)
-* HTML, CSS, Vanilla JS (Frontend)
-* Wikidata API (no authentication required)
+
 
 ---
 
 ## ⚙️ How to Run Locally
+
+1. Install Python
+Download from: https://www.python.org/downloads/
+During installation:
+✅ Tick “Add Python to PATH”
+
+2. Verify Python
+
+Open Command Prompt and run:
+
+python --version
 
 ### 1. Clone the repository
 

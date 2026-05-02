@@ -10,12 +10,12 @@ document.getElementById("search").addEventListener("input", async function () {
 
   const response = await fetch(
     `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(
-      query
-    )}&language=en&format=json&origin=*`
+      query,
+    )}&language=en&format=json&origin=*`,
   );
   const data = await response.json();
 
-  data.search.forEach(item => {
+  data.search.forEach((item) => {
     const li = document.createElement("li");
     li.className = "list-group-item list-group-item-action";
 
@@ -50,7 +50,7 @@ async function getPropertyLabel(pid) {
 
   try {
     const response = await fetch(
-      `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${pid}&format=json&languages=en&origin=*`
+      `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${pid}&format=json&languages=en&origin=*`,
     );
     const data = await response.json();
     const label = data.entities[pid]?.labels?.en?.value || "";
@@ -71,22 +71,17 @@ async function validate() {
   const resultDiv = document.getElementById("result");
   const searchSection = document.getElementById("searchSection");
 
-  // if (!qid && !label) {
-  //   resultDiv.innerHTML = `
-  //     <div class="alert alert-warning">
-  //       <i class="bi bi-exclamation-triangle"></i>
-  //       Please type a label or select an item first.
-  //     </div>`;
-  //   return;
-  // }
-
   searchSection.style.display = "none";
 
   let remaining = 30;
+
+  // IMPROVED LOADING MESSAGE WITH SPINNER
   resultDiv.innerHTML = `
     <div class="d-flex flex-column align-items-center justify-content-center my-5">
-      <div class="fancy-loader"></div>
-      <p class="mt-3 text-light fw-bold">...</p>
+      <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3 text-light fw-bold fs-4">Checking references...</p>
       <p id="countdownTimer" class="text-info small">
         Estimated time: ${remaining}s
       </p>
@@ -108,7 +103,7 @@ async function validate() {
     const response = await fetch("/validate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ qid })
+      body: JSON.stringify({ qid }),
     });
 
     const data = await response.json();
@@ -141,17 +136,20 @@ async function validate() {
       return;
     }
 
-    const aliveCount = data.filter(r => r.status === "alive").length;
-    const deadCount = data.filter(r => r.status === "dead").length;
+    const aliveCount = data.filter((r) => r.status === "alive").length;
+    const deadCount = data.filter((r) => r.status === "dead").length;
 
-    localStorage.setItem("reportData", JSON.stringify({
-      qid: qid || label,
-      label,
-      aliveCount,
-      deadCount,
-      references: data,
-      duration
-    }));
+    localStorage.setItem(
+      "reportData",
+      JSON.stringify({
+        qid: qid || label,
+        label,
+        aliveCount,
+        deadCount,
+        references: data,
+        duration,
+      }),
+    );
 
     let html = `
       <div class="card p-4">
@@ -272,7 +270,6 @@ async function validate() {
     document.getElementById("viewReportBtn").onclick = () => {
       window.open("/report", "_blank");
     };
-
   } catch (err) {
     clearInterval(countdownInterval);
     resultDiv.innerHTML = `
@@ -289,17 +286,13 @@ async function validate() {
 /**************************************
  * GLOBAL COLLAPSE BUTTON TOGGLE (FIX)
  **************************************/
-document.addEventListener("shown.bs.collapse", e => {
-  const btn = document.querySelector(
-    `[data-bs-target="#${e.target.id}"]`
-  );
+document.addEventListener("shown.bs.collapse", (e) => {
+  const btn = document.querySelector(`[data-bs-target="#${e.target.id}"]`);
   if (btn) btn.textContent = "Hide";
 });
 
-document.addEventListener("hidden.bs.collapse", e => {
-  const btn = document.querySelector(
-    `[data-bs-target="#${e.target.id}"]`
-  );
+document.addEventListener("hidden.bs.collapse", (e) => {
+  const btn = document.querySelector(`[data-bs-target="#${e.target.id}"]`);
   if (btn) btn.textContent = "Details";
 });
 

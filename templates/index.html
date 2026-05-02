@@ -1,81 +1,110 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Wikidata Reference Validator</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-
-  <!-- Navbar -->
- <nav class="navbar navbar-expand-lg glass-navbar shadow-sm fixed-top">
-
-
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
-        <i class="bi bi-search-heart"></i> Wikidata Validator
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">🏠 Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('about') }}">ℹ️ About</a>
-          </li>
-           <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="{{ url_for('use') }}">
-            📖 How to Use
-          </a>
-        </li>
-        </ul>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Wikidata Reference Validator</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg glass-navbar shadow-sm fixed-top">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
+          <i class="bi bi-search-heart"></i> Wikidata Validator
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-end"
+          id="navbarNav"
+        >
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="{{ url_for('home') }}"
+                >🏠 Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">ℹ️ About</a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="{{ url_for('use') }}"
+              >
+                📖 How to Use
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
 
-<div class="floating-icons">
-  <i class="bi bi-link-45deg"></i>
-  <i class="bi bi-book"></i>
-  <i class="bi bi-link-45deg"></i>
-  <i class="bi bi-check2-circle"></i>
-  <i class="bi bi-link-45deg"></i>
-  <i class="bi bi-search"></i> <!-- 🔍 Search icon added -->
-</div>
-
-  <div class="container app-container">
-    <div class="text-center mb-4">
-      <h1 class="fw-bold app-title">
-        <i class="bi bi-search-heart"></i> Wikidata Reference Validator
-      </h1>
-      <p class="text-light">Check external references on Wikidata Items for validity</p>
+    <div class="floating-icons">
+      <i class="bi bi-link-45deg"></i>
+      <i class="bi bi-book"></i>
+      <i class="bi bi-link-45deg"></i>
+      <i class="bi bi-check2-circle"></i>
+      <i class="bi bi-link-45deg"></i>
+      <i class="bi bi-search"></i>
+      <!-- 🔍 Search icon added -->
     </div>
 
-    <!-- Search Section -->
-   <!-- Search Section -->
-<div id="searchSection" class="card glass-card p-4 mb-4">
-  <div class="mb-3 position-relative">
-    <input type="text" id="search" class="form-control form-control-lg"
-           placeholder="Search for a Wikidata Items (e.g., Albert Einstein)">
-    <ul id="suggestions" class="list-group"></ul>
-  </div>
-  <div class="text-center">
-    <button class="btn btn-lg btn-glass shadow" onclick="validate()">
-      <i class="bi bi-shield-check"></i> Validate References
-    </button>
-  </div>
-</div>
+    <div class="container app-container">
+      <div class="text-center mb-4">
+        <h1 class="fw-bold app-title">
+          <i class="bi bi-search-heart"></i> Wikidata Reference Validator
+        </h1>
+        <p class="text-light">
+          Check external references on Wikidata Items for validity
+        </p>
+      </div>
 
+      <!-- Search Section -->
+      <!-- Search Section -->
+      <div id="searchSection" class="card glass-card p-4 mb-4">
+        <div class="mb-3 position-relative">
+          <input
+            type="text"
+            id="search"
+            class="form-control form-control-lg"
+            placeholder="Search for a Wikidata Items (e.g., Albert Einstein)"
+          />
+          <ul id="suggestions" class="list-group"></ul>
+        </div>
+        <div class="text-center">
+          <button class="btn btn-lg btn-glass shadow" onclick="validate()">
+            <i class="bi bi-shield-check"></i> Validate References
+          </button>
+        </div>
+      </div>
 
-    <!-- Results -->
-    <div id="result"></div>
-  </div>
-  
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+      <!-- Results -->
+      <div id="result"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

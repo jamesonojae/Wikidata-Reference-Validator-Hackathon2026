@@ -199,37 +199,6 @@
   const downloadBtn = document.getElementById("downloadBtn");
   if (downloadBtn) {
     downloadBtn.onclick = () => {
-      const results = localStorage.getItem("reportData");
-      if (!results) {
-        alert("No report data available to download.");
-        return;
-      }
-
-      const report = JSON.parse(results);
-
-      // Convert to CSV
-      const headers = ["URL", "Status", "Property", "Value"];
-      const rows = report.references.map(r => [
-        `"${r.url}"`,
-        r.status,
-        `"${r.propertyLabel}"`,
-        r.statementValue ? `"${r.statementValue}"` : ""
-      ]);
-
-      const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
-
-      // Trigger download
-      const blob = new Blob([csvContent], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `validation-report-${report.qid || "wikidata"}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      URL.revokeObjectURL(url);
     };
   }
 </script>

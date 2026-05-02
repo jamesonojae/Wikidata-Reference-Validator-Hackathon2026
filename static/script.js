@@ -71,14 +71,14 @@ async function validate() {
   const resultDiv = document.getElementById("result");
   const searchSection = document.getElementById("searchSection");
 
-  if (!qid && !label) {
-    resultDiv.innerHTML = `
-      <div class="alert alert-warning">
-        <i class="bi bi-exclamation-triangle"></i>
-        Please type a label or select an item first.
-      </div>`;
-    return;
-  }
+  // if (!qid && !label) {
+  //   resultDiv.innerHTML = `
+  //     <div class="alert alert-warning">
+  //       <i class="bi bi-exclamation-triangle"></i>
+  //       Please type a label or select an item first.
+  //     </div>`;
+  //   return;
+  // }
 
   searchSection.style.display = "none";
 
